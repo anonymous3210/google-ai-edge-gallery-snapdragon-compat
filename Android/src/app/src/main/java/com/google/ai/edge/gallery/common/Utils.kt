@@ -43,6 +43,7 @@ import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import com.google.ai.edge.gallery.ButtonClickAction
 import com.google.ai.edge.gallery.GalleryAnalytics.logGalleryEvent
+import com.google.ai.edge.gallery.data.SOC
 import com.google.ai.edge.gallery.GalleryEvent
 import com.google.ai.edge.gallery.data.SAMPLE_RATE
 import com.google.gson.Gson
@@ -431,10 +432,8 @@ fun isTensorG5(context: Context? = null): Boolean {
       !pm.hasSystemFeature(FEATURE_PIXEL_2026_MIDYEAR_EXPERIENCE) &&
       !pm.hasSystemFeature(FEATURE_PIXEL_2026_EXPERIENCE)
   }
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-    if (Build.SOC_MODEL?.equals("Tensor G5", ignoreCase = true) == true) {
-      return true
-    }
+  if (SOC.equals("tensor g5", ignoreCase = true)) {
+    return true
   }
   val model = Build.MODEL?.lowercase(Locale.ROOT) ?: return false
   return model.contains("pixel 10") && !model.contains("pixel 10a")
@@ -447,10 +446,8 @@ fun isTensorG6(context: Context? = null): Boolean {
     return pm.hasSystemFeature(FEATURE_PIXEL_2026_EXPERIENCE) &&
       !pm.hasSystemFeature(FEATURE_PIXEL_2027_EXPERIENCE)
   }
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-    if (Build.SOC_MODEL?.equals("Tensor G6", ignoreCase = true) == true) {
-      return true
-    }
+  if (SOC.equals("tensor g6", ignoreCase = true)) {
+    return true
   }
   val model = Build.MODEL?.lowercase(Locale.ROOT) ?: return false
   return model.contains("pixel 11")

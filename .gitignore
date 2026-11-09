@@ -6,3 +6,7 @@
 .idea/
 local.properties
 .DS_Store
+!artifacts/
+!artifacts/*.apk
+!artifacts/SHA256SUMS.txt
+artifacts/*.apk
