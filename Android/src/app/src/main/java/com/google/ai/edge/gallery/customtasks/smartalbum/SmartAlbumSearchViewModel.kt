@@ -615,9 +615,8 @@ class SmartAlbumSearchViewModel(
       return
     }
 
-    if (_uiState.value !is SearchUiState.Results) {
-      _uiState.value = SearchUiState.Loading
-    }
+    // A new query must not keep the previous query's matches in the results state.
+    _uiState.value = SearchUiState.Loading
     _isSearching.value = true
     searchJob = viewModelScope.launch {
       try {
@@ -636,9 +635,7 @@ class SmartAlbumSearchViewModel(
     _selectedImageAsset.value = asset
     _searchText.value = ""
     searchJob?.cancel()
-    if (_uiState.value !is SearchUiState.Results) {
-      _uiState.value = SearchUiState.Loading
-    }
+    _uiState.value = SearchUiState.Loading
     _isSearching.value = true
 
     firebaseAnalytics?.logEvent(

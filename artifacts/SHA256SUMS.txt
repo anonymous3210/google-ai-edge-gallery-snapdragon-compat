@@ -1,1 +1,2 @@
 0dad5c9e3af1a50738789fcf81b01314b019a4ab0497440ab88b23d8f94bf3ee  artifacts/GoogleAIEdgeGallery-api30-modelurls-debug.apk
+ea5a32383925f34c110dc4bf19c30f34126c65db468eb1557eb2aa2f05c9249d  artifacts/GoogleAIEdgeGallery-api30-bugfix-debug.apk

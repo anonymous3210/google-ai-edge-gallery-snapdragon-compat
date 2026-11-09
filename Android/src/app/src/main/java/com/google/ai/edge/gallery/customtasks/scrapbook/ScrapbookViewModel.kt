@@ -664,11 +664,13 @@ constructor(
         val originalBitmap = bitmaps[0]
         val currentBitmap = bitmaps[1]
         if (originalBitmap == null || currentBitmap == null) {
-          updateCutoutBitmapLoadingError(index = index, hasError = true)
+          originalBitmap?.recycle()
+          currentBitmap?.recycle()
+          updateCutoutBitmapLoadingError(cutoutId = id, hasError = true)
         } else {
-          Log.d(TAG, "Loaded cutout bitmaps for $index")
+          Log.d(TAG, "Loaded cutout bitmaps for $id")
           updateCutoutBitmaps(
-            index = index,
+            cutoutId = id,
             originalBitmap = originalBitmap,
             currentBitmap = currentBitmap,
           )
@@ -678,20 +680,24 @@ constructor(
     }
   }
 
-  fun updateCutoutBitmaps(index: Int, originalBitmap: Bitmap, currentBitmap: Bitmap) {
-    val newCutoutInfo = uiState.value.getCutoutInfoAtIndex(index = index)?.clone() ?: return
+  fun updateCutoutBitmaps(cutoutId: String, originalBitmap: Bitmap, currentBitmap: Bitmap) {
+    val newCutoutInfos = _uiState.value.cutoutInfos.toMutableList()
+    val index = newCutoutInfos.indexOfFirst { it.cutout.id == cutoutId }
+    if (index < 0) {
+      // The cutout may have been deleted while its bitmaps were loading.
+      originalBitmap.recycle()
+      currentBitmap.recycle()
+      return
+    }
+
+    val newCutoutInfo = newCutoutInfos[index].clone()
     newCutoutInfo.originalBitmap?.recycle()
     newCutoutInfo.originalBitmap = originalBitmap
     newCutoutInfo.bitmap?.recycle()
     newCutoutInfo.bitmap = currentBitmap
 
-    if (index >= 0) {
-      val newCutoutInfos = _uiState.value.cutoutInfos.toMutableList()
-      newCutoutInfos[index] = newCutoutInfo
-      _uiState.update { _uiState.value.copy(cutoutInfos = newCutoutInfos) }
-    } else {
-      _uiState.update { _uiState.value.copy(candidateCutoutInfo = newCutoutInfo) }
-    }
+    newCutoutInfos[index] = newCutoutInfo
+    _uiState.update { _uiState.value.copy(cutoutInfos = newCutoutInfos) }
   }
 
   fun updateCutoutCurrentBitmap(index: Int, currentBitmap: Bitmap) {
@@ -739,9 +745,10 @@ constructor(
     }
   }
 
-  fun updateCutoutBitmapLoadingError(index: Int, hasError: Boolean) {
+  fun updateCutoutBitmapLoadingError(cutoutId: String, hasError: Boolean) {
     val newCutoutInfos = _uiState.value.cutoutInfos.toMutableList()
-    if (index >= 0 && index <= newCutoutInfos.size - 1) {
+    val index = newCutoutInfos.indexOfFirst { it.cutout.id == cutoutId }
+    if (index >= 0) {
       val newCutoutInfo = newCutoutInfos[index].clone()
       if (!newCutoutInfo.errorLoadingBitmap) {
         newCutoutInfo.errorLoadingBitmap = hasError

@@ -91,3 +91,17 @@ Licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file 
 *   [Hugging Face LiteRT Community](https://huggingface.co/litert-community)
 *   [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM)
 *   [Google AI Edge Documentation](https://ai.google.dev/edge)
+
+## Checklist de bugs corrigidos
+
+Esta lista cobre os quatro defeitos identificados nas áreas revisadas. A presença desta checklist não significa que o restante do repositório foi auditado integralmente.
+
+- [x] **Exclusão de modelo importado por prefixo** — `DownloadStorageManager.deleteFilesFromImportDir` agora compara o nome exato. Regressão a verificar: excluir `modelo` não pode apagar `modelo-extra`.
+- [x] **Margem de expiração do token Hugging Face** — a janela de cinco minutos agora é calculada em milissegundos (`TOKEN_EXPIRY_BUFFER_MS`). Regressão a verificar: token que expira em menos de cinco minutos deve ser considerado expirado; um com mais de cinco minutos restantes deve continuar válido.
+- [x] **Resultados antigos no Smart Album** — o estado de resultados é limpo ao iniciar uma nova busca textual ou por imagem. Regressão a verificar: após pesquisar A e depois B, a lista deve conter somente resultados de B.
+- [x] **Bitmap associado ao recorte errado no Scrapbook** — a conclusão do carregamento localiza o recorte pelo ID, não pelo índice antigo; bitmaps carregados são liberados se o recorte já tiver sido removido. Regressão a verificar: excluir outro recorte durante o carregamento não pode trocar as imagens restantes.
+
+### Validação
+
+- [x] Executar `./gradlew :app:assembleDebug` — `BUILD SUCCESSFUL` com JDK 21 e Android SDK API 37.0.
+- [x] Executar `:app:testDebugUnitTest` — Gradle retornou `NO-SOURCE`; o projeto não tem testes unitários neste source set.

@@ -127,6 +127,7 @@ import net.openid.appauth.ResponseTypeValues
 
 private const val TAG = "AGModelManagerViewModel"
 private const val TEXT_INPUT_HISTORY_MAX_SIZE = 50
+private const val TOKEN_EXPIRY_BUFFER_MS = 5 * 60 * 1000L
 private const val MODEL_ALLOWLIST_FILENAME = "model_allowlist.json"
 private const val ALLOWLIST_BASE_URL =
   "https://raw.githubusercontent.com/google-ai-edge/gallery/refs/heads/main/model_allowlists"
@@ -1824,7 +1825,7 @@ constructor(
 
       // Check expiration (with 5-minute buffer).
       val curTs = System.currentTimeMillis()
-      val expirationTs = tokenData.expiresAtMs - 5 * 60
+      val expirationTs = tokenData.expiresAtMs - TOKEN_EXPIRY_BUFFER_MS
       Log.d(
         TAG,
         "Checking whether token has expired or not. Current ts: $curTs, expires at: $expirationTs",

@@ -450,16 +450,12 @@ class DownloadStorageManager(
     }
   }
 
-  /**
-   * Deletes files from the model imports directory whose absolute paths start with a given prefix.
-   */
+  /** Deletes only the imported model file whose name exactly matches [fileName]. */
   fun deleteFilesFromImportDir(fileName: String) {
-    val prefixAbsolutePath =
-      "${modelsDir.absolutePath}${File.separator}$IMPORTS_DIR${File.separator}$fileName"
     val filesToDelete =
       File(modelsDir, IMPORTS_DIR)
-        .listFiles { dirFile, name ->
-          File(dirFile, name).absolutePath.startsWith(prefixAbsolutePath)
+        .listFiles { _, name ->
+          name == fileName
         }
         .orEmpty()
     for (file in filesToDelete) {
